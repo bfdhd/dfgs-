@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=, initial-scale=1.0">
+    <title>Document</title>
+    <style>   
+        html,
+        body,    
+    #container {
+    width: 100%;
+    height: 100%;
+    }
+    .input-card{
+        position: fixed;
+        background-color: #aaa9b0;
+        overflow-y: auto;
+        width: 150px;
+        height: 150px;
+        top: 10px;
+        right: 10px;
+    }
+    .input-card .btn{
+    margin-right: 1.2rem;
+    width: 9rem;
+    }
+    .input-card .btn:last-child{
+    margin-right: 0;
+    }
+  </style>
+<script type="text/javascript">
+    window._AMapSecurityConfig = {
+      securityJsCode: "724e7a2436efd8705ef700ec2f44c7e4",
+    };
+  </script>
+  <script src="https://webapi.amap.com/loader.js"></script>
+<script src="https://webapi.amap.com/maps?v=2.0&key=9e79393c6a9ebf4024567e84733eac5d&plugin=AMap.Driving,AMap.Transfer,Amap.Walking,Amap.Riding,Amap.TruckDriving,Amap.DragRoute,AMap.MoveAnimation"></script>
+</head>
+<body>
+
+    <div id="container"></div>
+    <div class="input-card">
+    <button class="btn" onclick="startAnimation()">开始动画</button>
+    </div>   
+    <script>
+      console.log(AMap);
+
+  </script>
+
+  <script>
+      // 定义常量存储图标路径和信息窗口样式
+
+      const ICON_PATHS = {        
+      };
+
+      const INFO_WINDOW_STYLE = {
+
+          offset: new AMap.Pixel(0, -30),
+
+          minWidth: 200
+
+      };
+
+      // 创建地图实例
+
+      const map = new AMap.Map('container', {
+
+          center: [102.760536, 25.059855],
+
+          mapStyle: "amap://styles/default",
+
+          zoom: 16.5,
+
+          viewMode: '2D',
+
+          pitch: 45,
+
+      });
+
+      marker0 = new AMap.Marker({
+            map: map,
+            position: [102.75255874, 25.05775941],
+            icon: "https://a.amap.com/jsapi_demos/static/demo-center-v2/car.png",
+            offset: new AMap.Pixel(-13, -26),
+            duration:10000,
+        });//图标
+        AMap.plugin(["AMap.Driving","AMap.DragRoute"], function () {
+        var driving = new AMap.Driving({
+          map:map,
+          policy:0, 
+        });
+        var path = [];
+        path.push([102.75255874, 25.05775941]);
+        path.push([102.75482118, 25.05687740]);
+        path.push([102.75683284, 25.05660040]);
+        path.push([102.75932193, 25.05679965]);
+        path.push([102.75950968, 25.05798537]);
+        path.push([102.75950968, 25.05965218]);
+        path.push([102.76023924, 25.05975909]);
+        path.push([102.76024653, 25.06062777]);
+        path.push([102.75766701, 25.06270471]);
+        path.push([102.75663570, 25.06275733]);
+        path.push([102.75642858, 25.06163079]);
+        path.push([102.75819394, 25.05977162]);
+        path.push([102.75680602, 25.05964003]);
+        var route = new AMap.DragRoute(map, path, 0);//动态
+        route.search();
+        driving.search(path,function(status,result){
+            });
+        });//动态路线动画
+          function startAnimation(){
+            marker0.moveAlong(path,{duration:2000,})//速度
+          };
+      // 创建标记点函数
+      function createMarker(position, title, icon) {
+          const marker = new AMap.Marker({          
+              position: position,
+              title: title,
+              icon: icon
+          });
+          // 创建一个自定义的文本标签
+          const label = new AMap.Text({
+              text: title,
+              position: marker.getPosition(),
+              offset: new AMap.Pixel(0, -20)
+          });
+          map.add(label);
+          return marker;
+      }
+    // 创建信息窗口函数
+      function createInfoWindow(content) {
+          return new AMap.InfoWindow({
+              content: content,
+             ...INFO_WINDOW_STYLE
+          });
+      }
+      // 创建图标函数
+      function createIcon(path, size) {
+          return new AMap.Icon({
+              size: size,
+              image: path,
+               imageSize: size
+          });
+      }
+      // 创建地点标记和信息窗口
+      function createLocationMarkerAndInfoWindow(locationName, position, description) {
+          const icon = createIcon(ICON_PATHS[locationName], new AMap.Size(30, 30));
+          const marker = createMarker(position, locationName, icon);
+          const infoWindow = createInfoWindow(description);
+          marker.on('click', function () {
+              infoWindow.open(map, marker.getPosition());
+          });
+          map.add(marker);
+          return marker;
+      }
+      // 创建标记和信息窗口
+      createLocationMarkerAndInfoWindow('第一教学楼', [102.758799, 25.060301], '第一图书馆，是我们学校的标志性建筑');
+      createLocationMarkerAndInfoWindow('山上图书馆', [102.757977, 25.061454], '自然资源图书馆');
+      createLocationMarkerAndInfoWindow('第二教学楼', [102.756879, 25.061547], '没电梯，楼梯小，上下课非常拥堵');
+      createLocationMarkerAndInfoWindow('第一食堂', [102.759064, 25.061776], '便宜，味道一般，特色少，人多');
+      createLocationMarkerAndInfoWindow('第二食堂', [102.758103, 25.062613], '还行，离宿舍近');
+      createLocationMarkerAndInfoWindow('11栋', [102.755962, 25.061865], '现在大四的男生宿舍');
+      createLocationMarkerAndInfoWindow('智华楼', [102.755191, 25.057342], '用来学习的，里面很多自习座位');
+      createLocationMarkerAndInfoWindow('土木楼', [102.754714, 25.056781], '土木楼，测绘专业在这里');
+      createLocationMarkerAndInfoWindow('第三教学楼', [102.755852, 25.057212], '课多，位置离宿舍远');
+      createLocationMarkerAndInfoWindow('第二图书馆', [102.757471, 25.056981], '社会科学图书馆');
+      createLocationMarkerAndInfoWindow('第四教学楼', [102.758808, 25.05716], '租给隔壁中学了');
+      createLocationMarkerAndInfoWindow('体育馆', [102.7621, 25.06151], '提供体育锻炼和竞技场所。');
+      createLocationMarkerAndInfoWindow('教工食堂', [102.756554, 25.057892], '没吃过，不知道');
+      createLocationMarkerAndInfoWindow('第四食堂', [102.761788, 25.058597], '新修的，');
+      createLocationMarkerAndInfoWindow('东二院', [102.763257, 25.057519], '偏远，现在全是大一新生宿舍');
+      createLocationMarkerAndInfoWindow('篮球场', [102.760575, 25.062488], '篮球场');
+      createLocationMarkerAndInfoWindow('田径场', [102.761959, 25.062873], '足球场和田径场');
+      AMap.plugin(['AMap.ToolBar', 'AMap.Scale', 'AMap.Geolocation', 'AMap.ControlBar', 'AMa.HawkEye'], function () {
+          const toolbar = new AMap.ToolBar({
+              position: { left: '10px', top: '10px' }
+          });
+          const scale = new AMap.Scale({
+              position: { left: '10px', bottom: '50px' }
+          });
+       const hawkEye = new AMap.HawkEye({
+              position: { right: '10px', bottom: '10px' }
+          });
+          const geolocation = new AMap.Geolocation({
+              position: { left: '120px', bottom: '50px' }
+          });
+          const controlBar = new AMap.ControlBar({
+              position: { right: '150px', top: '10px' }
+          });
+          map.addControl(toolbar);
+          map.addControl(scale);
+          map.addControl(geolocation);
+          map.addControl(controlBar);
+          map.addControl(hawkEye);
+      });
+  </script> 
+</body>
+</html>
